@@ -1,0 +1,78 @@
+import javax.swing.*;
+        import java.awt.*;
+        import java.awt.event.ActionEvent;
+        import java.awt.event.ActionListener;
+
+        public class BombDefusalGame extends JFrame {
+
+        private JPanel topPanel;
+        private JPanel bombPanel;
+        private JPanel bottomPanel;
+
+        private String[] quizQuestions = {
+        "What is 2 + 2?",
+        "What is the capital of France?",
+        "What is 10 / 2?",
+        "What is the color of the sky?",
+        "What is 3 x 3?",
+        "What is the square root of 16?"
+        };
+
+        public BombDefusalGame() {
+        setTitle("Bomb Defusal Game");
+        setSize(800, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Top panel for displaying quiz text
+        topPanel = new JPanel();
+        topPanel.setPreferredSize(new Dimension(800, 100));
+        topPanel.setBackground(Color.LIGHT_GRAY);
+        add(topPanel, BorderLayout.NORTH);
+
+        // Central bomb panel with 6 bombs
+        bombPanel = new JPanel();
+        bombPanel.setLayout(new GridLayout(1, 6)); // Arrange bombs horizontally
+        for (int i = 0; i < 6; i++) {
+        JButton bombButton = new JButton("Bomb " + (i + 1));
+        int quizIndex = i; // Store the index for each bomb
+        bombButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        displayQuiz(quizIndex);
+        }
+        });
+        bombPanel.add(bombButton);
+        }
+        add(bombPanel, BorderLayout.CENTER);
+
+        // Bottom panel for displaying quiz text
+        bottomPanel = new JPanel();
+        bottomPanel.setPreferredSize(new Dimension(800, 100));
+        bottomPanel.setBackground(Color.LIGHT_GRAY);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+        }
+
+        private void displayQuiz(int index) {
+        String question = quizQuestions[index];
+        topPanel.removeAll();
+        bottomPanel.removeAll();
+
+        JLabel quizLabelTop = new JLabel("Quiz: " + question);
+        JLabel quizLabelBottom = new JLabel("Quiz: " + question);
+
+        topPanel.add(quizLabelTop);
+        bottomPanel.add(quizLabelBottom);
+
+        topPanel.revalidate();
+        topPanel.repaint();
+        bottomPanel.revalidate();
+        bottomPanel.repaint();
+        }
+
+        public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new BombDefusalGame());
+        }
+        }
