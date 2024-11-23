@@ -1,5 +1,8 @@
+
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Bomb Defusal Game 시작!");
+        GameController game = new GameController();
+        game.startGame();
     }
 }
