@@ -13,19 +13,25 @@ public class QuizGenerator {
         loadQuizzesFromFile("resources/quizzes.txt"); // 퀴즈 파일 경로
     }
 
-    // 퀴즈와 정답을 파일에서 읽어오기
     private static void loadQuizzesFromFile(String filePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try {
+            String absolutePath = System.getProperty("user.dir") + "/" + filePath;
+            System.out.println("파일 경로: " + absolutePath); // 디버그 메시지 추가
+            BufferedReader reader = new BufferedReader(new FileReader(absolutePath));
+    
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", 3); // 번호, 질문, 정답으로 분리
-                if (parts.length == 3) { // 데이터가 정확히 3부분으로 나뉘는지 확인
+                System.out.println("읽은 데이터: " + line); // 디버그 메시지 추가
+                if (line.trim().isEmpty()) continue; // 빈 줄 무시
+    
+                String[] parts = line.split(",", 3);
+                if (parts.length == 3) {
                     int index = Integer.parseInt(parts[0].trim());
                     String question = parts[1].trim();
                     String answer = parts[2].trim();
                     quizzes.add(new Quiz(index, question, answer));
                 } else {
-                    System.err.println("잘못된 퀴즈 데이터: " + line);
+                    System.err.println("잘못된 데이터 형식: " + line);
                 }
             }
             System.out.println("퀴즈 로드 완료: 총 " + quizzes.size() + "개");
@@ -33,6 +39,8 @@ public class QuizGenerator {
             System.err.println("퀴즈 파일을 읽는 중 오류 발생: " + e.getMessage());
         }
     }
+    
+    
 
     // 사용 가능한 퀴즈 번호 찾기
     public static int getNextAvailableQuizIndex() {
