@@ -1,38 +1,26 @@
-import java.io.*;
 import java.util.*;
 
 public class QuizGenerator {
-    private static final List<String> questions = new ArrayList<>();
-    private static final List<String> answers = new ArrayList<>();
+    private static final int TOTAL_QUIZZES = 50;
     private static final List<Integer> usedQuizIndices = new ArrayList<>();
+    private static final String[] questions = new String[TOTAL_QUIZZES];
+    private static final String[] answers = new String[TOTAL_QUIZZES];
 
     static {
-        loadQuizzes("quiz_data.txt");
-    }
-
-    private static void loadQuizzes(String fileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    questions.add(parts[0].trim());
-                    answers.add(parts[1].trim());
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("퀴즈 데이터를 읽는 중 오류 발생: " + e.getMessage());
+        for (int i = 0; i < TOTAL_QUIZZES; i++) {
+            questions[i] = "퀴즈 " + (i + 1) + ": 질문 내용";
+            answers[i] = "정답" + (i + 1);
         }
     }
 
     public static int getNextAvailableQuizIndex() {
-        for (int i = 0; i < questions.size(); i++) {
+        for (int i = 0; i < TOTAL_QUIZZES; i++) {
             if (!usedQuizIndices.contains(i)) {
                 usedQuizIndices.add(i);
                 return i;
             }
         }
-        return -1;
+        return -1; // 모든 퀴즈가 사용된 경우
     }
 
     public static void releaseQuizIndex(int index) {
@@ -40,10 +28,11 @@ public class QuizGenerator {
     }
 
     public static String getQuestion(int index) {
-        return questions.get(index);
+        return questions[index];
     }
 
     public static String getAnswer(int index) {
-        return answers.get(index);
+        return answers[index];
     }
+
 }

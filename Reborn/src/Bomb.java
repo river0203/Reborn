@@ -8,17 +8,19 @@ public class Bomb {
     private int quizIndex; // 퀴즈 번호
     private boolean defused;
     private JButton button;
+    private static int bombCounter = 1;
 
-    public Bomb(String name, int timeLimit, String question, String answer, int quizIndex) {
-        this.name = name;
-        this.timeLimit = timeLimit;
-        this.question = question;
-        this.answer = answer;
-        this.quizIndex = quizIndex;
-        this.defused = false;
-        this.button = new JButton(name);
-    }
+public Bomb(String name, int timeLimit, String question, String answer, int quizIndex) {
+    this.name = name + " (" + bombCounter++ + ")"; // 고유 ID 추가
+    this.timeLimit = timeLimit;
+    this.question = question;
+    this.answer = answer;
+    this.quizIndex = quizIndex;
+    this.defused = false;
+    this.button = new JButton(this.name);
+}
 
+    
     public String getName() {
         return name;
     }
