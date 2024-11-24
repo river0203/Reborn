@@ -1,8 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
-import utils.QuizGenerator;
+import javax.swing.*;
 
 public class GameController {
     private JFrame frame;
@@ -14,12 +13,12 @@ public class GameController {
 
     public GameController() {
         frame = new JFrame("Bomb Defusal Game");
-        frame.setSize(1480, 720);
+        frame.setSize(720, 1480);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         bombPanel = new JPanel();
-        bombPanel.setLayout(new GridLayout(2, 3, 20, 20));
+        bombPanel.setLayout(new GridLayout(3, 2, 20, 20));
         frame.add(bombPanel, BorderLayout.CENTER);
 
         startButton = new JButton("게임 시작");
@@ -56,49 +55,48 @@ public class GameController {
     }
 
     private void assignQuizToBomb(int bombIndex) {
-        int quizIndex = QuizGenerator.getNextAvailableQuizIndex(); // 새 퀴즈 번호 가져오기
+        int quizIndex = QuizGenerator.getNextAvailableQuizIndex();
         if (quizIndex == -1) {
-            JOptionPane.showMessageDialog(frame, "사용 가능한 퀴즈가 없습니다!");
+            JOptionPane.showMessageDialog(frame, "퀴즈를 모두 사용했습니다!");
             return;
         }
-    
-        // 새 폭탄 정보 설정
+
         int timeLimit = (int) (Math.random() * 50) + 10; // 10~60초
         String question = QuizGenerator.getQuestion(quizIndex);
         String answer = QuizGenerator.getAnswer(quizIndex);
-    
-        bombs[bombIndex] = new Bomb("Bomb " + (bombIndex + 1), timeLimit, question, answer, quizIndex);
-    
-        JButton bombButton = bombs[bombIndex].getButton();
-        bombButton.setText("Bomb " + (bombIndex + 1));
+
+        Bomb bomb = new Bomb("Bomb " + (bombIndex + 1), timeLimit, question, answer, quizIndex);
+        bombs[bombIndex] = bomb;
+
+        JButton bombButton = bomb.getButton();
         bombPanel.add(bombButton);
         bombPanel.revalidate();
         bombPanel.repaint();
-    
-        // 새로 할당된 폭탄 버튼에 이벤트 추가
-        bombButton.addActionListener(e -> handleBombClick(bombs[bombIndex]));
+
+        // 폭탄 버튼 클릭 이벤트
+        bombButton.addActionListener(e -> handleBombClick(bomb));
     }
-    
+
     private void handleBombClick(Bomb bomb) {
         if (bomb.isDefused()) {
             JOptionPane.showMessageDialog(frame, bomb.getName() + "는 이미 해제되었습니다!");
             return;
         }
     
-        // 퀴즈 팝업 표시
         String userInput = JOptionPane.showInputDialog(frame, bomb.getQuestion(), "퀴즈: " + bomb.getName(), JOptionPane.QUESTION_MESSAGE);
     
-        // 정답 확인
         if (userInput != null && userInput.equalsIgnoreCase(bomb.getAnswer())) {
             bomb.defuse();
-            bomb.getButton().setText(bomb.getName() + " 해제 완료!");
             JOptionPane.showMessageDialog(frame, bomb.getName() + " 해제 성공!");
-    
-            // 해제된 퀴즈 번호 해제
             QuizGenerator.releaseQuizIndex(bomb.getQuizIndex());
     
-            // 새로운 퀴즈를 폭탄에 할당
-            assignQuizToBomb(getBombIndex(bomb));
+            // 패널에서 기존 버튼 제거
+            bombPanel.remove(bomb.getButton());
+            bombPanel.revalidate();
+            bombPanel.repaint();
+    
+            // 새로운 폭탄 생성
+            assignQuizToBomb(getBombIndex(bomb)); // 새로운 퀴즈와 시간 부여
         } else if (userInput != null) {
             JOptionPane.showMessageDialog(frame, "정답이 아닙니다. 다시 시도하세요.");
         }
